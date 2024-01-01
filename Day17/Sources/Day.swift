@@ -1,15 +1,8 @@
-import Foundation
+import AOCCommon
 
-public class Day17: Day {
-    public func run(_ input: String, part: Part) -> String {
-        switch part {
-        case .first:
-            return runFirst(input)
-        case .second:
-            return runSecond(input)
-        }
-    }
-
+final class Day: DayType {
+    public init() {}
+    
     class Map {
         var data: [[Int]]
         var rows: Int
@@ -105,18 +98,18 @@ public class Day17: Day {
             for row in 0..<rows {
                 var str = ""
                 for col in 0..<cols {
-                    str += points.contains(.init(row, col)) ? "*" : "\(data(at: .init(row, col)))"
+                    str += "\u{001B}[38;2;250;0;0m\u{001B}[48;2;0;200;0m" + (points.contains(.init(row, col)) ? "*" : "\(data(at: .init(row, col)))" + "\u{001B}[0m")
                 }
                 print(str)
             }
         }
 
         struct State: Comparable {
-            static func < (lhs: Day17.Map.State, rhs: Day17.Map.State) -> Bool {
+            static func < (lhs: Day.Map.State, rhs: Day.Map.State) -> Bool {
                 lhs.heatLoss > rhs.heatLoss
             }
             
-            static func == (lhs: Day17.Map.State, rhs: Day17.Map.State) -> Bool {
+            static func == (lhs: Day.Map.State, rhs: Day.Map.State) -> Bool {
                 lhs.heatLoss == rhs.heatLoss
             }
 
@@ -158,16 +151,11 @@ public class Day17: Day {
         }
     }
 
-    func runFirst(_ input: String) -> String {
-        let map = Map(input)
-        //map.draw()
-
-        let result = map.search()
-        
-        return "\(result)"
-    }
-
-    func runSecond(_ input: String) -> String {
-        ""
+    func run(_ str: String, part: Part) -> String {
+        let map = Map(Day.testP1!.input)
+        map.draw()
+        return "42"
     }
 }
+
+
