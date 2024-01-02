@@ -5,8 +5,7 @@ extension Part: ExpressibleByArgument { }
 
 enum Input: String, Codable, ExpressibleByArgument {
     case real
-    case testP1
-    case testP2
+    case test
 }
 
 @main
@@ -44,12 +43,10 @@ extension DayRunner {
         switch input {
         case .real:
             inputStr = dayType.realInput
-        case .testP1:
-            inputStr = dayType.testP1?.input
-            expected = dayType.testP1?.output
-        case .testP2:
-            inputStr = dayType.testP2?.input
-            expected = dayType.testP2?.output
+
+        case .test:
+            inputStr = part == ._1 ? dayType.testP1?.input : dayType.testP2?.input
+            expected = part == ._1 ? dayType.testP1?.output : dayType.testP2?.output
         }
         guard let inputStr else {
             print("NO INPUT.")
@@ -58,11 +55,12 @@ extension DayRunner {
 
         let dayInstance = dayType.init()
         let result = dayInstance.run(inputStr, part: part)
+        print("Result: \(result)")
         if let expected {
             if expected == result {
-                print("VALID. Result: \(result)")
+                print("VALID.".fc(.green).reset())
             } else {
-                print("INVALID. Result: \(result) Expected: \(expected)")
+                print("INVALID. Expected: \(expected)".fc(.red).reset())
             }
         }
     }

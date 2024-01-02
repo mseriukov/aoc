@@ -153,7 +153,6 @@ public final class Day: DayType {
     
     public func run(_ str: String, part: Part) -> String {
         let map = Map(Day.testP1!.input)
-        map.draw()
         return "42"
     }
 }
