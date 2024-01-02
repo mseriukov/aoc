@@ -32,6 +32,8 @@ struct DayRunner: ParsableCommand {
 
 extension DayRunner {
     mutating func run() throws {
+        var s = ""
+
         guard let dayType = dayList[dayNumber] else {
             print("Unknown day.")
             return
