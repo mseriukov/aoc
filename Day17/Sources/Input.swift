@@ -21,7 +21,7 @@ extension Day {
             output: "102"
         )
     }
-
+    
     public static var testP2: TestData? {
         .init(
             input: """
@@ -42,7 +42,7 @@ extension Day {
             output: "102"
         )
     }
-
+    
     public static var realInput: String {
 """
 431444433342125215253532112243421421312243436553553344453636546562663445262223253266466626524544425426351331532221114425243121235442231233123

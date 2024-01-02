@@ -8,7 +8,23 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMajor(from: "1.0.0")),
         .package(path: "../AOCCommon"),
-        .package(path: "../Day17")
+        .package(path: "../Day1"),
+        .package(path: "../Day2"),
+        .package(path: "../Day3"),
+        .package(path: "../Day4"),
+        .package(path: "../Day5"),
+        .package(path: "../Day6"),
+        .package(path: "../Day7"),
+        .package(path: "../Day8"),
+        .package(path: "../Day9"),
+        .package(path: "../Day10"),
+        .package(path: "../Day11"),
+        .package(path: "../Day12"),
+        .package(path: "../Day13"),
+        .package(path: "../Day14"),
+        .package(path: "../Day15"),
+        .package(path: "../Day16"),
+        .package(path: "../Day17"),
     ],
     targets: [
         .executableTarget(
@@ -16,7 +32,23 @@ let package = Package(
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 .product(name: "AOCCommon", package: "AOCCommon"),
-                "Day17"
+                "Day1",
+                "Day2",
+                "Day3",
+                "Day4",
+                "Day5",
+                "Day6",
+                "Day7",
+                "Day8",
+                "Day9",
+                "Day10",
+                "Day11",
+                "Day12",
+                "Day13",
+                "Day14",
+                "Day15",
+                "Day16",
+                "Day17",
             ],
             path: "Sources"
         )

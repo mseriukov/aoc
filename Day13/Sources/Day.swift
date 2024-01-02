@@ -1,7 +1,7 @@
 import Foundation
 import AOCCommon
 
-final class Day: DayType {
+public final class Day: DayType {
     public init() {}
     
     public func run(_ input: String, part: Part) -> String {
@@ -12,12 +12,12 @@ final class Day: DayType {
             return runSecond(input)
         }
     }
-
+    
     struct Map {
         var rows: Int
         var cols: Int
         var data: [[String]]
-
+        
         func transposed() -> Map {
             var result: [[String]] = []
             for col in 0..<cols {
@@ -25,7 +25,7 @@ final class Day: DayType {
             }
             return Map(rows: cols, cols: rows, data: result)
         }
-
+        
         func score(part2: Bool) -> Int? {
             var result: Int?
             var justFound = false
@@ -37,9 +37,9 @@ final class Day: DayType {
                 var found = true
                 var matches = 0
                 var total = 0
-
+                
                 let smudges = part2 ? 1 : 0
-
+                
                 for rcol in range.lowerBound..<(range.lowerBound + range.count / 2) {
                     let pairs = Array(zip(
                         getCol(at: rcol),
@@ -60,15 +60,15 @@ final class Day: DayType {
             result = (result ?? 0) + vres.reduce(0, +)
             return result
         }
-
+        
         func getRow(at index: Int) -> [String] {
             data[index]
         }
-
+        
         func getCol(at index: Int) -> [String] {
             data.reduce([]) { $0 + [$1[index]] }
         }
-
+        
         func draw() {
             for row in 0..<rows {
                 var result = ""
@@ -78,23 +78,23 @@ final class Day: DayType {
                 print(result)
             }
         }
-
+        
         init(rows: Int, cols: Int, data: [[String]]) {
             self.rows = rows
             self.cols = cols
             self.data = data
         }
-
+        
         init<S>(_ strs: [S]) where S: StringProtocol {
             rows = strs.count
             cols = strs[0].count
             data = strs.map { Array($0).map { String($0) } }
         }
     }
-
+    
     func parseInput(_ input: String) -> [Map] {
         let lines = input.split(omittingEmptySubsequences: false, whereSeparator: \.isNewline)
-
+        
         var maps: [Map] = []
         var buf: [String] = []
         for line in lines {
@@ -108,7 +108,7 @@ final class Day: DayType {
         maps.append(Map(buf))
         return maps
     }
-
+    
     func runFirst(_ input: String) -> String {
         let maps = parseInput(input)
         var sum = 0
@@ -120,7 +120,7 @@ final class Day: DayType {
         }
         return "\(sum)"
     }
-
+    
     func runSecond(_ input: String) -> String {
         let maps = parseInput(input)
         var sum = 0

@@ -1,6 +1,5 @@
 import ArgumentParser
 import AOCCommon
-import Day17
 
 extension Part: ExpressibleByArgument { }
 
@@ -33,29 +32,30 @@ struct DayRunner: ParsableCommand {
 
 extension DayRunner {
     mutating func run() throws {
-        let days: [Int: any Day] = [
-            17 : Day17.Day()
-        ]
-        
-        guard let dayType = days[dayNumber] else {
+        guard let dayType = dayList[dayNumber] else {
             print("Unknown day.")
             return
         }
-        
+
         var expected: String? = nil
-        let inputStr: String
+        var inputStr: String? = nil
         switch input {
-        case .real: 
+        case .real:
             inputStr = dayType.realInput
         case .testP1:
-            inputStr = dayType.testP1.input
-            expected = dayType.testP1.output
+            inputStr = dayType.testP1?.input
+            expected = dayType.testP1?.output
         case .testP2:
-            inputStr = dayType.testP2.input
-            expected = dayType.testP2.output
+            inputStr = dayType.testP2?.input
+            expected = dayType.testP2?.output
         }
-        let dayInstance = dayType()
-        let result = day.run(inputStr, part: part)
+        guard let inputStr else {
+            print("NO INPUT.")
+            return
+        }
+
+        let dayInstance = dayType.init()
+        let result = dayInstance.run(inputStr, part: part)
         if let expected {
             if expected == result {
                 print("VALID. Result: \(result)")
@@ -65,4 +65,3 @@ extension DayRunner {
         }
     }
 }
-

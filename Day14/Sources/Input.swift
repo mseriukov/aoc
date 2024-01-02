@@ -18,16 +18,16 @@ extension Day {
             output: "136"
         )
     }
-
+    
     public static var testP2: TestData? {
         .init(
             input: testP1!.input,
             output: "64"
         )
     }
-
+    
     public static var realInput: String {
-    """
+        """
         .O....O.OOO..O.#.#.###.#O....OO..OO.O...O...O###..#.#....#.#....##..O.O.O##.......O.#.O.......##O#O.
         ..#.#.#......O........O#OOOO#.O.#.#.#..O.#O...#..O...#..O.O#......#O...##O...O.#...O.O...##O.O.O...#
         .......O.OO..O.##.#..O.#...O#.#.......O.O.##.......#.O..#.......O.....#...O...#.#OO......#....#.....

@@ -1,9 +1,9 @@
 import Foundation
 import AOCCommon
 
-final class Day: DayType {
+public final class Day: DayType {
     public init() {}
-    
+
     public func run(_ input: String, part: Part) -> String {
         switch part {
         case ._1:
@@ -214,5 +214,4 @@ final class Day: DayType {
         map.draw()
         return "\(map.load())"
     }
-
 }
