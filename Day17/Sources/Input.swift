@@ -25,7 +25,7 @@ extension Day {
     public static var testP2: TestData? {
         .init(
             input: testP1!.input,
-            output: "102"
+            output: "94"
         )
     }
     

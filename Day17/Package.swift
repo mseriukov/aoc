@@ -11,13 +11,15 @@ let package = Package(
             targets: [dayName])
     ],
     dependencies: [
-        .package(path: "../AOCCommon")
+        .package(path: "../AOCCommon"),
+        .package(url: "https://github.com/apple/swift-collections.git", branch: "release/1.1") 
     ],
     targets: [
         .target(
             name: dayName,
             dependencies: [
-                .product(name: "AOCCommon", package: "AOCCommon")
+                .product(name: "AOCCommon", package: "AOCCommon"),
+                .product(name: "Collections", package: "swift-collections")
             ],
             path: "Sources"
         ),

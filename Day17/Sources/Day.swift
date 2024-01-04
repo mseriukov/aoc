@@ -1,4 +1,5 @@
 import AOCCommon
+import Collections
 
 public final class Day: DayType {
     public init() {}
@@ -7,81 +8,17 @@ public final class Day: DayType {
         var data: [[Int]]
         var rows: Int
         var cols: Int
-        
-        enum Direction: CaseIterable {
-            case up, down, left, right
-            
-            func next(_ includingForward: Bool) -> [Direction] {
-                switch self {
-                case .up:
-                    return [.left, .right] + (includingForward ? [.up] : [])
-                case .down:
-                    return [.left, .right] + (includingForward ? [.down] : [])
-                case .left:
-                    return [.up, .down] + (includingForward ? [.left] : [])
-                case .right:
-                    return [.up, .down] + (includingForward ? [.right] : [])
-                }
-            }
-        }
-        
-        struct Point: Hashable, Equatable {
-            var row: Int
-            var col: Int
-            
-            static let zero = Self(0, 0)
-            
-            mutating func advance(_ dir: Direction) {
-                switch dir {
-                case .up: row -= 1
-                case .down: row += 1
-                case .left: col -= 1
-                case .right: col += 1
-                }
-            }
-            
-            func advanced(_ dir: Direction) -> Point {
-                switch dir {
-                case .up: return Point(row - 1, col)
-                case .down: return Point(row + 1, col)
-                case .left: return Point(row, col - 1)
-                case .right: return Point(row, col + 1)
-                }
-            }
-            
-            init(_ row: Int, _ col: Int) {
-                self.row = row
-                self.col = col
-            }
-        }
-        
-        struct Crucible {
-            var p: Point
-            var d: Direction
-            var blocks: Int
-            
-            mutating func advance(_ dir: Direction) {
-                p.advance(d)
-            }
-            
-            func next() -> [Crucible] {
-                let includingForward = blocks < 3
-                return d.next(includingForward).map {
-                    Crucible(
-                        p: p.advanced($0),
-                        d: $0,
-                        blocks: includingForward && d == $0 ? blocks + 1 : 1
-                    )
-                }
-            }
-        }
-        
+
         init(_ str: String) {
             data = str.split(whereSeparator: \.isNewline).map({ $0.map { Int(String($0))! } })
             rows = data.count
             cols = data[0].count
         }
-        
+
+        func advancePoint(_ p: Point, in d: Direction) -> Point? {
+            point(p.advanced(d), offset: .zero)
+        }
+
         func point(_ p: Point, offset: Point = .zero) -> Point? {
             let newRow = p.row + offset.row
             let newCol = p.col + offset.col
@@ -94,65 +31,131 @@ public final class Day: DayType {
             return data[p.row][p.col]
         }
         
-        func draw(_ points: [Point] = []) {
+        func draw(_ dist: [State: Int] = [:], _ prev: [State: State]) {
+            var path: [Point] = []
+            if var state = dist.keys.first(where: { $0.p == Point(rows - 1, cols - 1) }) {
+                while true {
+                    path.append(state.p)
+                    guard let ns = prev[state] else { break }
+                    state = ns
+                }
+            }
+
             for row in 0..<rows {
                 var str = ""
                 for col in 0..<cols {
-                    str += "\u{001B}[38;2;250;0;0m\u{001B}[48;2;0;200;0m" + (points.contains(.init(row, col)) ? "*" : "\(data(at: .init(row, col)))" + "\u{001B}[0m")
+                    let p = Point(row, col)
+                    str += path.contains(p) ? "*" : "\(data(at: p))"
                 }
                 print(str)
             }
         }
         
-        struct State: Comparable {
+        struct State: Comparable, Equatable, Hashable {
+            func hash(into hasher: inout Hasher) {
+                p.hash(into: &hasher)
+                d.hash(into: &hasher)
+                s.hash(into: &hasher)
+            }
+
+            static func == (lhs: Self, rhs: Self) -> Bool {
+                lhs.p == rhs.p &&
+                lhs.d == rhs.d &&
+                lhs.s == rhs.s
+            }
+
             static func < (lhs: Day.Map.State, rhs: Day.Map.State) -> Bool {
-                lhs.heatLoss > rhs.heatLoss
+                lhs.cost < rhs.cost
             }
-            
-            static func == (lhs: Day.Map.State, rhs: Day.Map.State) -> Bool {
-                lhs.heatLoss == rhs.heatLoss
-            }
-            
-            var crucible: Crucible
-            var heatLoss: Int
+
+            var p: Point
+            var d: Direction
+            var s: Int
+            var cost: Int
         }
-        
-        struct DPoint: Hashable {
-            let p: Point
-            let d: Direction
-        }
-        
-        func search() -> Int {
-            var result: Int = Int.max
-            var queue: PriorityQueue<State> = PriorityQueue()
-            var visited: Set<DPoint> = Set()
-            let startPoint = Point(0, 0)
-            let finishPoint = Point(rows - 1, cols - 1)
-            
-            queue.push(.init(crucible: .init(p: startPoint, d: .right, blocks: 1), heatLoss: 0))
-            while true {
-                guard let state = queue.pop() else { break }
-                guard !visited.contains(DPoint(p: state.crucible.p, d: state.crucible.d)) else { continue }
-                visited.insert(DPoint(p: state.crucible.p, d: state.crucible.d))
-                let heatLoss = state.heatLoss + data(at: state.crucible.p)
-                
-                if state.crucible.p == finishPoint {
-                    result = min(result, heatLoss - data(at: startPoint))
+
+        func neighbours(_ state: State, part: Part) -> [State] {
+            var result: [State] = []
+            if part == ._1 {
+                do { // Left
+                    let nd = state.d.ccw()
+                    if let np = advancePoint(state.p, in: nd) {
+                        let nc = state.cost + data(at: np)
+                        result.append(State(p: np, d: nd, s: 1, cost: nc))
+                    }
                 }
-                
-                let nextCrucibles = state.crucible.next()
-                    .filter { point($0.p) != nil }
-                
-                for crucible in nextCrucibles {
-                    queue.push(.init(crucible: crucible, heatLoss: heatLoss))
+                do { // Right
+                    let nd = state.d.cw()
+                    if let np = advancePoint(state.p, in: nd) {
+                        let nc = state.cost + data(at: np)
+                        result.append(State(p: np, d: nd, s: 1, cost: nc))
+                    }
+                }
+                do { // Forward
+                    if state.s < 3, let np = advancePoint(state.p, in: state.d) {
+                        let nc = state.cost + data(at: np)
+                        result.append(State(p: np, d: state.d, s: state.s + 1, cost: nc))
+                    }
+                }
+            } else {
+                if state.s < 10, let np = advancePoint(state.p, in: state.d) {
+                    let nc = state.cost + data(at: np)
+                    result.append(State(p: np, d: state.d, s: state.s + 1, cost: nc))
+                }
+
+                guard state.s >= 4 else { return result }
+
+                do { // Left
+                    let nd = state.d.ccw()
+                    if let np = advancePoint(state.p, in: nd) {
+                        let nc = state.cost + data(at: np)
+                        result.append(State(p: np, d: nd, s: 1, cost: nc))
+                    }
+                }
+                do { // Right
+                    let nd = state.d.cw()
+                    if let np = advancePoint(state.p, in: nd) {
+                        let nc = state.cost + data(at: np)
+                        result.append(State(p: np, d: nd, s: 1, cost: nc))
+                    }
                 }
             }
             return result
         }
+
+        func dijkstra(_ source: State, part: Part) -> (dist: [State: Int], prev: [State: State]) {
+            var dist: [State: Int] = [source: 0]
+            var prev: [State: State] = [:]
+            var queue: Heap<State> = Heap()
+            queue.insert(source)
+
+            while true {
+                guard let state = queue.popMin() else { return (dist, prev) }
+                for n in neighbours(state, part: part) {
+                    let curDist = dist[state] ?? Int.max
+                    let newDist = dist[n] ?? Int.max
+                    let alt = curDist + data(at: n.p)
+                    if alt < newDist {
+                        dist[n] = alt
+                        prev[n] = state
+                        if !queue.unordered.contains(n) {
+                            queue.insert(n)
+                        }
+                    }
+                }
+            }
+            return (dist, prev)
+        }
+
+        func search(part: Part) -> Int? {
+            let (dist, prev) = dijkstra(State(p: .zero, d: .right, s: 1, cost: 0), part: part)
+            draw(dist, prev)
+            return dist.keys.filter({ $0.p == Point(rows - 1, cols - 1) }).compactMap({ dist[$0] }).min()
+        }
     }
     
     public func run(_ str: String, part: Part) -> String {
-        let map = Map(Day.testP1!.input)
-        return "42"
+        let map = Map(str)
+        return "\(map.search(part: part)!)"
     }
 }
