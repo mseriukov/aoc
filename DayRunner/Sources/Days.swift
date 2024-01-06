@@ -18,6 +18,13 @@ import Day15
 import Day16
 import Day17
 import Day18
+import Day19
+import Day20
+import Day21
+import Day22
+import Day23
+import Day24
+import Day25
 
 let dayList: [Int: any DayType.Type] = [
     1 : Day1.Day.self,
@@ -37,5 +44,12 @@ let dayList: [Int: any DayType.Type] = [
     15 : Day15.Day.self,
     16 : Day16.Day.self,
     17 : Day17.Day.self,
-    18 : Day18.Day.self
+    18 : Day18.Day.self,
+    19 : Day19.Day.self,
+    20 : Day20.Day.self,
+    21 : Day21.Day.self,
+    22 : Day22.Day.self,
+    23 : Day23.Day.self,
+    24 : Day24.Day.self,
+    25 : Day25.Day.self,
 ]

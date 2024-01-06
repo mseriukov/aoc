@@ -26,6 +26,13 @@ let package = Package(
         .package(path: "../Day16"),
         .package(path: "../Day17"),
         .package(path: "../Day18"),
+        .package(path: "../Day19"),
+        .package(path: "../Day20"),
+        .package(path: "../Day21"),
+        .package(path: "../Day22"),
+        .package(path: "../Day23"),
+        .package(path: "../Day24"),
+        .package(path: "../Day25"),
     ],
     targets: [
         .executableTarget(
@@ -51,6 +58,13 @@ let package = Package(
                 "Day16",
                 "Day17",
                 "Day18",
+                "Day19",
+                "Day20",
+                "Day21",
+                "Day22",
+                "Day23",
+                "Day24",
+                "Day25",
             ],
             path: "Sources"
         )
